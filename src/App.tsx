@@ -1,25 +1,30 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import SignInPage from "./components/signIn";
+import { DashBoard } from "./components/dashboard";
+import { useState } from "react";
+import UserContext from "./context/userContext";
+import { IUser, initialUserState } from "./common-utils/commonUtils";
+import ProtectedRoute from "./route-config/protectedRoute";
 
 function App() {
+  const [userContext, setUserContext] = useState<IUser>(initialUserState);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <UserContext.Provider value={{ userContext, setUserContext }}>
+      <BrowserRouter>
+        <Routes>
+          <Route path="*" element={<SignInPage />} />
+          <Route
+            path="/dashboard"
+            element={
+              <ProtectedRoute>
+                <DashBoard />
+              </ProtectedRoute>
+            }
+          />
+        </Routes>
+      </BrowserRouter>
+    </UserContext.Provider>
   );
 }
 
